@@ -1,0 +1,17 @@
+.DS_Store
+target
+.settings
+.classpath
+.project
+/test-output
+log
+*.iml
+.idea
+bin
+/.mvn/
+/.factorypath
+.idea
+out
+*.sqlite
+build
+.gradle
