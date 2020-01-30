@@ -24,9 +24,31 @@ import org.forgerock.opendj.ldap.responses.SearchResultReference
 import org.glassfish.grizzly.nio.transport.TCPNIOTransport
 import org.glassfish.grizzly.nio.transport.TCPNIOTransportBuilder
 import java.io.IOException
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
 
 class App : CliktCommand() {
     override fun run() {
+    }
+}
+
+class KeyStoreDebug : CliktCommand(name = "keystore", help = "check the keystore") {
+    private val host: String by option(help = "Hostname for the AD server").default("google.com")
+    private val port: Int by option(help = "Port for the AD server").int().default(443)
+
+    override fun run() {
+        val sslSocketFactory = SSLSocketFactory.getDefault()!!
+        val sslSocket = sslSocketFactory.createSocket(host, port) as SSLSocket
+
+        val inputStream = sslSocket.inputStream
+        val outputStream = sslSocket.outputStream
+
+        outputStream.write(1)
+        while (inputStream.available() > 0) {
+            print(inputStream.read())
+        }
+        println("Secured connection performed successfully")
     }
 }
 
@@ -40,15 +62,15 @@ class LDAPSearch : CliktCommand(name = "search", help = "Search LDAP Directory")
     private val tls: String by option(help = "Enable TLS").default("false")
     private val ssl: String by option(help = "Enable SSL").default("false")
 
+    private val protocol: String by option(help = "Protocol").default("TLSv1.2")
 
     private val baseContext: String by option(help = "Base context for search.").required()
 
     private val pageSize: Int by option(help = "Page size during the search").int().default(100)
     private val filter: String by option(help = "Filter for search.").default("")
 
-
     override fun run() {
-        val factory = LDAPConnectionFactory(host, port, buildLDAPOptions())
+        val factory = LDAPConnectionFactory(host, port, buildLDAPOptions(protocol))
         factory.connection.use { conn ->
             if (username.isNotBlank()) {
                 conn.bind(username, password.toCharArray())
@@ -68,7 +90,7 @@ class LDAPSearch : CliktCommand(name = "search", help = "Search LDAP Directory")
                     }
 
                     override fun handleResult(r: Result) {
-
+                        println(r)
                     }
 
                     override fun handleReference(p0: SearchResultReference?): Boolean {
@@ -86,14 +108,14 @@ class LDAPSearch : CliktCommand(name = "search", help = "Search LDAP Directory")
         }
     }
 
-    private fun buildLDAPOptions(): LDAPOptions {
+    private fun buildLDAPOptions(protocol: String): LDAPOptions {
         val lo = LDAPOptions()
         //lo.setProviderClassLoader(getClass().getClassLoader());
         lo.tcpnioTransport = buildTransportInstance()
         if (ssl.toBoolean() || tls.toBoolean()) {
-            val bld = SSLContextBuilder().setTrustManager(TrustManagers.trustAll())
-            val sslContext = bld.sslContext
-            lo.sslContext = sslContext
+            println("Using SSL: ${ssl.toBoolean()}")
+            lo.sslContext = sslContext(protocol)
+            println("Using TLS: ${tls.toBoolean()}")
             lo.setUseStartTLS(tls.toBoolean())
         }
         return lo
@@ -110,6 +132,14 @@ class LDAPSearch : CliktCommand(name = "search", help = "Search LDAP Directory")
 
 }
 
+fun sslContext(protocol: String): SSLContext {
+    val bld = SSLContextBuilder()
+        .setProtocol(protocol)
+        .setTrustManager(TrustManagers.trustAll())
+    return bld.sslContext
+}
+
 fun main(args: Array<String>) = App()
     .subcommands(LDAPSearch())
+    .subcommands(KeyStoreDebug())
     .main(args)
