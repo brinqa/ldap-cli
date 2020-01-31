@@ -24,12 +24,38 @@ import org.forgerock.opendj.ldap.responses.SearchResultReference
 import org.glassfish.grizzly.nio.transport.TCPNIOTransport
 import org.glassfish.grizzly.nio.transport.TCPNIOTransportBuilder
 import java.io.IOException
+import java.util.TreeMap
 import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLServerSocketFactory
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
 
+
 class App : CliktCommand() {
     override fun run() {
+    }
+}
+
+class PrintSupportedCiphers : CliktCommand(name = "ciphers") {
+    override fun run() {
+        val ssf = SSLServerSocketFactory.getDefault() as SSLServerSocketFactory
+
+        val defaultCiphers = ssf.defaultCipherSuites!!
+        val availableCiphers = ssf.supportedCipherSuites!!
+
+        val ciphers = TreeMap<String, Boolean>()
+        for (i in availableCiphers.indices) {
+            ciphers[availableCiphers[i]] = java.lang.Boolean.FALSE
+        }
+
+        for (i in defaultCiphers.indices) {
+            ciphers[defaultCiphers[i]] = java.lang.Boolean.TRUE
+        }
+        println("Default\tCipher")
+        ciphers.forEach { (cipher, enabled) ->
+            val x = if (enabled) '*' else ' '
+            print("$x\t$cipher")
+        }
     }
 }
 
@@ -142,4 +168,5 @@ fun sslContext(protocol: String): SSLContext {
 fun main(args: Array<String>) = App()
     .subcommands(LDAPSearch())
     .subcommands(KeyStoreDebug())
+    .subcommands(PrintSupportedCiphers())
     .main(args)
