@@ -13,19 +13,18 @@ properties(
 
 node {
     def gradleCmd = "./gradlew "
-    docker.image('openjdk:11').inside("-u root --network container:${name}") {
+    docker.image('openjdk:11').inside() {
         stage('checkout') {
             checkout scm
         }
 
         stage('build') {
             sh "java -version"
-            sh gradleCmd + " clean assemble --no-daemon"
+            sh gradleCmd + " clean build --no-daemon"
         }
 
         stage('publish') {
             try {
-                sh gradleCmd + "publish --no-daemon"
                 archiveArtifacts artifacts: '**/build/distributions/*.zip', fingerprint: true
             } finally {
                 sh gradleCmd + "clean --no-daemon"
