@@ -20,7 +20,11 @@ node {
 
         stage('build') {
             sh "java -version"
-            sh gradleCmd + " clean build --no-daemon"
+            try {
+                sh gradleCmd + " clean build --no-daemon"
+            } catch {
+                sh gradleCmd + "clean --no-daemon"
+            }
         }
 
         stage('publish') {

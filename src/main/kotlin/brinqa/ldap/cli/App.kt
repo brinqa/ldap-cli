@@ -224,6 +224,7 @@ fun sslContext(protocol: String): SSLContext {
 
 fun main(args: Array<String>) = App()
     .subcommands(LDAPSearch())
+    .subcommands(LDAPSchema())
     .subcommands(KeyStoreDebug())
     .subcommands(PrintSupportedCiphers())
     .main(args)
