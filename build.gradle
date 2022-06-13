@@ -9,6 +9,9 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url "https://maven.forgerock.org/repo/community/"
+    }
 }
 
 dependencies {
