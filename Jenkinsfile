@@ -22,7 +22,7 @@ node {
             sh "java -version"
             try {
                 sh gradleCmd + " clean build --no-daemon"
-            } catch {
+            } catch(ex) {
                 sh gradleCmd + "clean --no-daemon"
             }
         }
