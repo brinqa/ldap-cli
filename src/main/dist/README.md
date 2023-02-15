@@ -6,24 +6,11 @@ The purpose of this project is to debug an LDAP/AD environment without the full 
 
 * JDK 11+
 
-# Getting Started
-
-The project uses a standard Gradle build to the main application. See gradle docs for more details.
-
-To see all the available tasks:
-   
-    $ ./gradlew tasks
-    
-Simple build of the distribution:
-
-    $ ./gradlew assembleDist
-      
 # Install
 
 Unzip the distribution to a directory from the project home this is `build/distributions`.
 
-
-    $ unzip ldap-cli.zip
+    $ tar xf ldap-cli.tar
     $ cd ldap-cli
     $ ./bin/ldap-cli -h
     Options:
