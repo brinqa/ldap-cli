@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Brinqa, Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package brinqa.ldap.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
@@ -23,7 +38,6 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLServerSocketFactory
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.SSLSocketFactory
-
 
 class App : CliktCommand() {
 
@@ -77,7 +91,7 @@ class KeyStoreDebug : CliktCommand(name = "ssl-connect", help = "check the keyst
 
 class LDAPSchema : CliktCommand(name = "schema", help = "Print LDAP Schema") {
 
-    private val host: String by option(help = "Hostname for the AD server").prompt("Hostname")
+    private val host: String by option(help = "Hostname for the LDAP/AD server").prompt("Hostname")
     private val port: Int by option(help = "Port for the AD server").int().default(389)
     private val username: String by option(help = "Username for the connection").prompt("Username")
     private val password: String by option(help = "Password for the connection").prompt(text = "Password", hideInput = true)
@@ -128,7 +142,7 @@ class LDAPSchema : CliktCommand(name = "schema", help = "Print LDAP Schema") {
 
 class LDAPSearch : CliktCommand(name = "search", help = "Search LDAP Directory") {
 
-    private val host: String by option(help = "Hostname for the AD server").prompt("Hostname")
+    private val host: String by option(help = "Hostname for the LDAP/AD server").prompt("Hostname")
     private val port: Int by option(help = "Port for the AD server").int().default(389)
     private val username: String by option(help = "Username for the connection").prompt("Username")
     private val password: String by option(help = "Password for the connection").prompt(text = "Password", hideInput = true)

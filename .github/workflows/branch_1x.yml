@@ -1,0 +1,41 @@
+name: 4.4.x Build
+
+on:
+  push:
+    branches: [ "1.x" ]
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/github-script@v6
+      id: determine-revision
+      with:
+        result-encoding: string
+        script: |
+          var branch = context.ref.split('/').pop()
+          return branch.replace('v','').replace('.x','-SNAPSHOT')
+
+    - name: Get Revision
+      run: echo "Revision ${{steps.determine-revision.outputs.result}}"
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Build with Gradle
+      run: ./gradlew clean build
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: './build/distributions/ldap-cli*'
