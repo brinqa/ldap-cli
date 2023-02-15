@@ -4,7 +4,7 @@ The purpose of this project is to debug an LDAP/AD environment without the full 
 
 # Requirements
 
-* JDK 8+
+* JDK 11+
 
 # Getting Started
 
