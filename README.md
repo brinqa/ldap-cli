@@ -8,7 +8,7 @@ The purpose of this project is to debug an LDAP/AD environment without the full 
 
 # Install
 
-Unzip the distribution to a directory from the project home this is `build/distributions`.
+Download the tar/zip from the releases. 
 
     $ tar xf ldap-cli.tar
     $ cd ldap-cli
